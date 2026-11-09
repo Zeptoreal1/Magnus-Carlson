@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'nova-home-geode-source.zip'
+      - 'NOVA-HOME-SOURCE-REUPLOAD.zip'
       - '.github/workflows/build-nova-home.yml'
 
 permissions:
@@ -39,6 +39,22 @@ jobs:
           test -f project/CMakeLists.txt
           test -f project/mod.json
           test -f project/src/main.cpp
+
+      - name: Validate package before compiling
+        shell: bash
+        run: |
+          python - <<'PYTEST'
+          import json
+          from pathlib import Path
+          p = Path('project')
+          meta = json.loads((p / 'mod.json').read_text(encoding='utf-8'))
+          assert meta['geode'] == '5.11.2', f"Geode metadata version must be 5.11.2, got {meta['geode']}"
+          assert meta['gd']['android'] == '2.2081' and meta['gd']['win'] == '2.2081'
+          assert meta['dependencies']['geode.node-ids'] == '>=v1.23.3', 'Node IDs dependency missing'
+          assert (p / 'src/main.cpp').is_file(), 'Missing main.cpp'
+          assert (p / 'CMakeLists.txt').is_file(), 'Missing CMakeLists.txt'
+          print('NOVA Home preflight passed: SDK 5.11.2 / GD 2.2081 / Node IDs dependency present')
+          PYTEST
 
       - name: Compile Geode mod
         uses: geode-sdk/build-geode-mod@main
