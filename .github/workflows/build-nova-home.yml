@@ -1,0 +1,65 @@
+name: Build NOVA Home Geode Mod
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'nova-home-geode-source.zip'
+      - '.github/workflows/build-nova-home.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: Android 64-bit
+            runner: ubuntu-latest
+            target: Android64
+          - name: Android 32-bit
+            runner: ubuntu-latest
+            target: Android32
+          - name: Windows 64-bit
+            runner: windows-latest
+            target: Win64
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract source ZIP
+        shell: bash
+        run: |
+          mkdir -p project
+          unzip -q nova-home-geode-source.zip -d project
+          test -f project/CMakeLists.txt
+          test -f project/mod.json
+          test -f project/src/main.cpp
+
+      - name: Compile Geode mod
+        uses: geode-sdk/build-geode-mod@main
+        with:
+          sdk: 'v5.11.2'
+          path: ./project
+          target: ${{ matrix.platform.target }}
+          combine: true
+
+  package:
+    name: Create combined .geode file
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge Windows + Android builds
+        id: merged
+        uses: geode-sdk/build-geode-mod/combine@main
+
+      - name: Upload installable .geode
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOVA-Home-Geode-Mod
+          path: ${{ steps.merged.outputs.build-output }}
+          if-no-files-found: error
