@@ -1,0 +1,48 @@
+{
+  "geode": "v5.11.2",
+  "gd": {
+    "win": "2.2081",
+    "android": "2.2081"
+  },
+  "id": "nova.home-tiles",
+  "name": "NOVA Home",
+  "version": "v1.0.0",
+  "developer": "NOVA Community",
+  "description": "A premium soft-glass tiled home screen with a large centered Play button and polished motion.",
+  "tags": [
+    "interface",
+    "customization"
+  ],
+  "settings": {
+    "accent": {
+      "type": "rgb",
+      "name": "Accent colour",
+      "description": "The colour used for tile borders, icon highlights, and the play tile.",
+      "default": "#6EE7FF"
+    },
+    "entrance-animation": {
+      "type": "bool",
+      "name": "Smooth entrance animations",
+      "description": "Slide and gently scale tiles into place when entering the home screen.",
+      "default": true
+    },
+    "secondary-tiles": {
+      "type": "bool",
+      "name": "Show secondary tiles",
+      "description": "Turn Settings, Stats and Achievements into small utility tiles when these buttons exist.",
+      "default": true
+    },
+    "reposition-title": {
+      "type": "bool",
+      "name": "Compact header logo",
+      "description": "Move the Geometry Dash logo higher and scale it down slightly for room.",
+      "default": true
+    },
+    "glass-panel": {
+      "type": "bool",
+      "name": "Show soft glass backdrop",
+      "description": "Show a subtle transparent background behind the tile layout.",
+      "default": true
+    }
+  }
+}
